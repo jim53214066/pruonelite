@@ -72,7 +72,7 @@ stages:
         namespace: $(namespace)
         command: 'apply'
         arguments: |
-          -f $(System.DefaultWorkingDirectory)/deployment.yml
+          -f $(Build.SourcesDirectory)/deployment.yml
 
     - task: Kubernetes@1
       displayName: 'Deploy service'
@@ -84,7 +84,7 @@ stages:
         namespace: $(namespace)
         command: 'apply'
         arguments: |
-          -f $(System.DefaultWorkingDirectory)/service.yml
+          -f $(Build.SourcesDirectory)/service.yml
 
 
     - task: Kubernetes@1
@@ -97,4 +97,4 @@ stages:
         namespace: $(namespace)
         command: 'apply'
         arguments: |
-          -f $(System.DefaultWorkingDirectory)/ingress.yml
+          -f $(Build.SourcesDirectory)/ingress.yml
