@@ -4,7 +4,7 @@
 # https://aka.ms/yaml
 
 trigger:
-- master
+- none
 
 variables:
   dockerRegistryServiceConnection: 'JimDockerHub'
@@ -71,6 +71,7 @@ stages:
         kubernetesCluster: $(aksCluster)
         namespace: $(namespace)
         command: 'apply'
+        useConfigurationFile: false
         arguments: |
           -f $(System.DefaultWorkingDirectory)/deployment.yml
           -f $(System.DefaultWorkingDirectory)/service.yml
