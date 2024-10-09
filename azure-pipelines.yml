@@ -19,7 +19,6 @@ steps:
 
 - task: Maven@4
   inputs:
-    azureSubscription: 'subScription2023(04569f0b-c481-4e72-8501-0d49b573c52e)'
     mavenPomFile: 'pom.xml'
     goals: 'clean package'
     publishJUnitResults: true
@@ -35,7 +34,7 @@ steps:
 
 - task: Docker@2
   inputs:
-    containerRegistry: 'Jim''s Docker Hub'
+    containerRegistry: 'JimDockerHub'
     repository: 'whitewolfjim/epa-app'
     command: 'buildAndPush'
     Dockerfile: '**/Dockerfile'
