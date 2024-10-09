@@ -11,8 +11,8 @@ variables:
   imageRepository: 'whitewolfjim/epa-app'
   containerRegistry: 'JimDockerHub'
   kubernetesServiceConnection: 'yourAzureServiceConnection'
-  resourceGroup: 'yourResourceGroup'
-  aksCluster: 'yourAKSCluster'
+  resourceGroup: 'openai'
+  aksCluster: 'aes'
 
 stages:
 - stage: Build
