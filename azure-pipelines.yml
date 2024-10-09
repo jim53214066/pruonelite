@@ -55,7 +55,6 @@ stages:
 
 - stage: DeployToDev
   displayName: 'Deploy to Development'
-  dependsOn: Build
   jobs:
   - job: DeployToDev
     displayName: 'Deploy to Development'
