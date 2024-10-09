@@ -1,0 +1,22 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: epa-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: epa-app
+  template:
+    metadata:
+      labels:
+        app: epa-app
+    spec:
+      containers:
+        - name: epa-app-container
+          image: whitewolfjim/epa-app:latest
+          ports:
+            - containerPort: 8080
+          env:
+            - name: SPRING_PROFILES_ACTIVE
+              value: "dev"
