@@ -71,8 +71,30 @@ stages:
         kubernetesCluster: $(aksCluster)
         namespace: $(namespace)
         command: 'apply'
-        useConfigurationFile: false
         arguments: |
           -f $(System.DefaultWorkingDirectory)/deployment.yml
+
+    - task: Kubernetes@1
+      displayName: 'Deploy service'
+      inputs:
+        connectionType: 'Azure Resource Manager'
+        azureSubscriptionEndpoint: $(kubernetesServiceConnection)
+        azureResourceGroup: $(resourceGroup)
+        kubernetesCluster: $(aksCluster)
+        namespace: $(namespace)
+        command: 'apply'
+        arguments: |
           -f $(System.DefaultWorkingDirectory)/service.yml
+
+
+    - task: Kubernetes@1
+      displayName: 'Deploy Ingress'
+      inputs:
+        connectionType: 'Azure Resource Manager'
+        azureSubscriptionEndpoint: $(kubernetesServiceConnection)
+        azureResourceGroup: $(resourceGroup)
+        kubernetesCluster: $(aksCluster)
+        namespace: $(namespace)
+        command: 'apply'
+        arguments: |
           -f $(System.DefaultWorkingDirectory)/ingress.yml
