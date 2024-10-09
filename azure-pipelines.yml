@@ -10,7 +10,7 @@ variables:
   dockerRegistryServiceConnection: 'JimDockerHub'
   imageRepository: 'whitewolfjim/epa-app'
   containerRegistry: 'JimDockerHub'
-  kubernetesServiceConnection: 'yourAzureServiceConnection'
+  kubernetesServiceConnection: 'aes-aks-resource-connection'
   resourceGroup: 'openai'
   aksCluster: 'aes'
 
