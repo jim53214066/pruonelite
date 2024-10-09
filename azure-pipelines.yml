@@ -13,6 +13,7 @@ variables:
   kubernetesServiceConnection: 'aes-aks-resource-connection'
   resourceGroup: 'openai'
   aksCluster: 'aes'
+  namespace: 'aes'
 
 stages:
 - stage: Build
@@ -68,7 +69,7 @@ stages:
         azureSubscriptionEndpoint: $(kubernetesServiceConnection)
         azureResourceGroup: $(resourceGroup)
         kubernetesCluster: $(aksCluster)
-        namespace: 'development'
+        namespace: $(namespace)
         command: 'apply'
         arguments: |
           -f $(System.DefaultWorkingDirectory)/deployment.yml
