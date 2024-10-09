@@ -6,38 +6,72 @@
 trigger:
 - master
 
-pool:
-  vmImage: ubuntu-latest
+variables:
+  dockerRegistryServiceConnection: 'JimDockerHub'
+  imageRepository: 'whitewolfjim/epa-app'
+  containerRegistry: 'JimDockerHub'
+  kubernetesServiceConnection: 'yourAzureServiceConnection'
+  resourceGroup: 'yourResourceGroup'
+  aksCluster: 'yourAKSCluster'
 
-steps:
+stages:
+- stage: Build
+  jobs:
+  - job: BuildAndPush
+    pool:
+      vmImage: ubuntu-latest
 
-- script: java -version
-  displayName: 'Check Java Version'
+    steps:
 
-- script: mvn -version
-  displayName: 'Check Maven Version'
+    - script: java -version
+      displayName: 'Check Java Version'
 
-- task: Maven@4
-  inputs:
-    mavenPomFile: 'pom.xml'
-    goals: 'clean package'
-    publishJUnitResults: true
-    testResultsFiles: '**/surefire-reports/TEST-*.xml'
-    javaHomeOption: 'JDKVersion'
-    mavenVersionOption: 'Default'
-    mavenAuthenticateFeed: false
-    effectivePomSkip: false
-    sonarQubeRunAnalysis: false
-- task: DockerInstaller@0
-  inputs:
-    dockerVersion: '17.09.0-ce'
+    - script: mvn -version
+      displayName: 'Check Maven Version'
 
-- task: Docker@2
-  inputs:
-    containerRegistry: 'JimDockerHub'
-    repository: 'whitewolfjim/epa-app'
-    command: 'buildAndPush'
-    Dockerfile: '**/Dockerfile'
-    tags: 'latest'
+    - task: Maven@4
+      inputs:
+        mavenPomFile: 'pom.xml'
+        goals: 'clean package'
+        publishJUnitResults: true
+        testResultsFiles: '**/surefire-reports/TEST-*.xml'
+        javaHomeOption: 'JDKVersion'
+        mavenVersionOption: 'Default'
+        mavenAuthenticateFeed: false
+        effectivePomSkip: false
+        sonarQubeRunAnalysis: false
+    - task: DockerInstaller@0
+      inputs:
+        dockerVersion: '17.09.0-ce'
+
+    - task: Docker@2
+      inputs:
+        containerRegistry: $(dockerRegistryServiceConnection)
+        repository: $(imageRepository)
+        command: 'buildAndPush'
+        Dockerfile: '**/Dockerfile'
+        tags: 'latest'
 
 
+- stage: DeployToDev
+  displayName: 'Deploy to Development'
+  dependsOn: Build
+  jobs:
+  - job: DeployToDev
+    displayName: 'Deploy to Development'
+    pool:
+      vmImage: 'ubuntu-latest'
+    steps:
+    - task: Kubernetes@1
+      displayName: 'Deploy to Development'
+      inputs:
+        connectionType: 'Azure Resource Manager'
+        azureSubscriptionEndpoint: $(kubernetesServiceConnection)
+        azureResourceGroup: $(resourceGroup)
+        kubernetesCluster: $(aksCluster)
+        namespace: 'development'
+        command: 'apply'
+        arguments: |
+          -f $(System.DefaultWorkingDirectory)/deployment.yml
+          -f $(System.DefaultWorkingDirectory)/service.yml
+          -f $(System.DefaultWorkingDirectory)/ingress.yml
